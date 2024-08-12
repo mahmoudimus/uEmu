@@ -105,7 +105,7 @@ class UEMU_HELPERS:
             action_handler_t.__init__(self)
             self.action_handler = handler
             self.action_type = action
-    
+
         def activate(self, ctx):
             if ctx.form_type == BWN_DISASM:
                 self.action_handler.handle_menu_action(self.action_type)
@@ -137,7 +137,9 @@ class UEMU_HELPERS:
 
     @staticmethod
     def inf_is_be():
-        if IDA_SDK_VERSION >= 700:
+        if IDA_SDK_VERSION >= 900:
+            return inf_is_be()
+        elif IDA_SDK_VERSION >= 700:
             return cvar.inf.is_be()
         else:
             return cvar.inf.mf
@@ -248,7 +250,7 @@ class UEMU_HELPERS:
                 [ "esp",    UC_X86_REG_ESP  ],
                 [ "eip",    UC_X86_REG_EIP  ],
                 [ "sp",     UC_X86_REG_SP   ],
-            ],        
+            ],
             "arm" : [
                 [ "R0",     UC_ARM_REG_R0  ],
                 [ "R1",     UC_ARM_REG_R1  ],
