@@ -10,16 +10,16 @@ UEMU_USE_AS_SCRIPT      = True    # Set to `False` if you want to load uEmu auto
 
 # === Import
 
-import pickle
-import threading
+import collections
 import json
 import os
-import collections
+import pickle
+import threading
 
 # IDA Python SDK
 from idaapi import *
-from idc import *
 from idautils import *
+from idc import *
 
 if IDA_SDK_VERSION >= 700:
     # functions
@@ -78,8 +78,8 @@ from PyQt5.QtWidgets import *
 
 # Unicorn SDK
 from unicorn import *
-from unicorn.arm_const import *
 from unicorn.arm64_const import *
+from unicorn.arm_const import *
 from unicorn.mips_const import *
 from unicorn.x86_const import *
 
@@ -1828,20 +1828,21 @@ class uEmuPlugin(plugin_t, UI_Hooks):
     def unhook_ui_actions(self):
         if self.popup_menu_hook != None:
             self.popup_menu_hook.unhook()
-
-    # IDA 7.x
-    def finish_populating_widget_popup(self, widget, popup_handle):
-        if get_widget_type(widget) == BWN_DISASM:
-            for item in self.MENU_ITEMS:
-                if item.popup:
-                    attach_action_to_popup(widget, popup_handle, item.action, self.plugin_name + "/")
     
-    # IDA 6.x
-    def finish_populating_tform_popup(self, form, popup_handle):
-        if get_tform_type(form) == BWN_DISASM:
-            for item in self.MENU_ITEMS:
-                if item.popup:
-                    attach_action_to_popup(form, popup_handle, item.action, self.plugin_name + "/")
+    if IDA_SDK_VERSION >= 700:
+    # IDA 7.x
+        def finish_populating_widget_popup(self, widget, popup_handle):
+            if get_widget_type(widget) == BWN_DISASM:
+                for item in self.MENU_ITEMS:
+                    if item.popup:
+                        attach_action_to_popup(widget, popup_handle, item.action, self.plugin_name + "/")
+    else:
+        # IDA 6.x
+        def finish_populating_tform_popup(self, form, popup_handle):
+            if get_tform_type(form) == BWN_DISASM:
+                for item in self.MENU_ITEMS:
+                    if item.popup:
+                        attach_action_to_popup(form, popup_handle, item.action, self.plugin_name + "/")
 
     # --- DELEGATES
 
