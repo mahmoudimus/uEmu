@@ -145,27 +145,34 @@ class UEMU_HELPERS:
             return cvar.inf.mf
 
     @staticmethod
+    def inf_is_64bit():
+        if IDA_SDK_VERSION >= 830:
+            return inf_is_64bit()
+        else:
+            return True if ph.flag & PR_USE64 else False
+
+    @staticmethod
     def get_arch():
-        if ph.id == PLFM_386 and ph.flag & PR_USE64:
+        if ph.id == PLFM_386 and UEMU_HELPERS.inf_is_64bit():
             return "x64"
-        elif ph.id == PLFM_386 and ph.flag & PR_USE32:
+        elif ph.id == PLFM_386:
             return "x86"
-        elif ph.id == PLFM_ARM and ph.flag & PR_USE64:
+        elif ph.id == PLFM_ARM and UEMU_HELPERS.inf_is_64bit():
             if UEMU_HELPERS.inf_is_be():
                 return "arm64be"
             else:
                 return "arm64le"
-        elif ph.id == PLFM_ARM and ph.flag & PR_USE32:
+        elif ph.id == PLFM_ARM:
             if UEMU_HELPERS.inf_is_be():
                 return "armbe"
             else:
                 return "armle"
-        elif ph.id == PLFM_MIPS and ph.flag & PR_USE64:
+        elif ph.id == PLFM_MIPS and UEMU_HELPERS.inf_is_64bit():
             if UEMU_HELPERS.inf_is_be():
                 return "mips64be"
             else:
                 return "mips64le"
-        elif ph.id == PLFM_MIPS and ph.flag & PR_USE32:
+        elif ph.id == PLFM_MIPS:
             if UEMU_HELPERS.inf_is_be():
                 return "mipsbe"
             else:
